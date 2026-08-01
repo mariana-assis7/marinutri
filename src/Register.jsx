@@ -44,17 +44,22 @@ export default function Register({ setView, navigateToDashboard }) {
         password,
         name,
       });
-
+      console.log('Sign-up response:', { data, signUpError });
       if (signUpError) {
+        // Show specific error from auth client
         if (signUpError.code === 'EMAIL_ALREADY_IN_USE') {
-          setError('Este e-mail já está sendo utilizado.');
+          setError('Este e‑mail já está sendo utilizado.');
+        } else if (signUpError.message) {
+          setError(signUpError.message);
         } else {
-          setError(signUpError.message || 'Erro ao criar conta. Tente novamente.');
+          setError('Erro ao criar conta. Tente novamente.');
         }
       } else {
+        // Successful sign‑up, navigate to dashboard
         navigateToDashboard();
       }
     } catch (err) {
+      console.error('Unexpected sign‑up error:', err);
       setError('Erro de conexão. Verifique sua internet.');
     } finally {
       setLoading(false);
