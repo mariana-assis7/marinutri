@@ -215,6 +215,7 @@ export default function Dashboard({ navigateToLogin }) {
   const totalPacientes = pacientes.length;
 
   // 2. Consultas da semana
+  const now = new Date();
   const getStartOfWeek = (d) => {
     const day = d.getDay();
     const diff = d.getDate() - day; // Adjust to Sunday
