@@ -81,6 +81,29 @@ export async function createPaciente(paciente) {
   }
 }
 
+export async function updatePaciente(id, paciente) {
+  const headers = await getAuthHeaders();
+  const url = `${DATA_API_URL}/pacientes?id=eq.${id}`;
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        ...headers,
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify(paciente),
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`HTTP ${response.status} (${response.statusText}): ${errText}`);
+    }
+    return response.json();
+  } catch (e) {
+    throw new Error(`Patch falhou para ${url}: ${e.message}`);
+  }
+}
+
+
 export async function createConsulta(consulta) {
   const headers = await getAuthHeaders();
   const url = `${DATA_API_URL}/consultas`;

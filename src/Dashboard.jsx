@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { authClient } from './auth';
-import { fetchPacientes, fetchConsultas, createPaciente, createConsulta } from './api';
+import { fetchPacientes, fetchConsultas, createPaciente, updatePaciente, createConsulta } from './api';
 
 export default function Dashboard({ navigateToLogin }) {
   const { data: session, isPending: sessionPending } = authClient.useSession();
@@ -13,6 +13,7 @@ export default function Dashboard({ navigateToLogin }) {
 
   // Sub-states & Search
   const [selectedPacienteId, setSelectedPacienteId] = useState(null);
+  const [editingPacienteId, setEditingPacienteId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isRecordingConsulta, setIsRecordingConsulta] = useState(false);
 
@@ -272,7 +273,74 @@ export default function Dashboard({ navigateToLogin }) {
   };
 
   // ==========================================
-  // Form submission: Create Paciente
+  // Form helpers for New / Edit Paciente
+  // ==========================================
+  const startNewPaciente = () => {
+    setEditingPacienteId(null);
+    setNewPacienteNome('');
+    setNewPacienteNascimento('');
+    setNewPacienteSexo('Feminino');
+    setNewPacienteTelefone('');
+    setNewPacienteWhatsapp('');
+    setNewPacienteEmail('');
+    setNewPacientePeso('');
+    setNewPacienteAltura('');
+    setSelectedObjetivos([]);
+    setNewPacienteObjetivoTexto('');
+    setNewPacienteNivelAtividade('Sedentário');
+    setSelectedPatologias([]);
+    setNewPacientePatologiaCustom('');
+    setSelectedRestricoes([]);
+    setNewPacienteRestricaoCustom('');
+    setSelectedAlergias([]);
+    setNewPacienteAlergiaCustom('');
+    setNewPacienteMedicamentos('');
+    setNewPacienteSuplementos('');
+    setNewPacienteRefeicoes('');
+    setNewPacienteHorarioAcorda('');
+    setNewPacienteHorarioDorme('');
+    setNewPacienteAgua('');
+    setNewPacienteAtividadeFisica('Não');
+    setNewPacienteAtividadeFisicaDesc('');
+    setNewPacienteObs('');
+    setFormTab('pessoal');
+    setActiveTab('paciente-cadastro');
+  };
+
+  const startEditPaciente = (p) => {
+    setEditingPacienteId(p.id);
+    setNewPacienteNome(p.nome || '');
+    setNewPacienteNascimento(p.data_nascimento || '');
+    setNewPacienteSexo(p.sexo || 'Feminino');
+    setNewPacienteTelefone(p.telefone || '');
+    setNewPacienteWhatsapp(p.whatsapp || '');
+    setNewPacienteEmail(p.email || '');
+    setNewPacientePeso(p.peso_inicial ? String(p.peso_inicial) : '');
+    setNewPacienteAltura(p.altura ? String(p.altura) : '');
+    setSelectedObjetivos(Array.isArray(p.objetivos) ? p.objetivos : []);
+    setNewPacienteObjetivoTexto(p.objetivo_texto || '');
+    setNewPacienteNivelAtividade(p.nivel_atividade || 'Sedentário');
+    setSelectedPatologias(Array.isArray(p.patologias) ? p.patologias : []);
+    setNewPacientePatologiaCustom('');
+    setSelectedRestricoes(Array.isArray(p.restricoes_alimentares) ? p.restricoes_alimentares : []);
+    setNewPacienteRestricaoCustom('');
+    setSelectedAlergias(Array.isArray(p.alergias) ? p.alergias : []);
+    setNewPacienteAlergiaCustom('');
+    setNewPacienteMedicamentos(p.medicamentos || '');
+    setNewPacienteSuplementos(p.suplementos || '');
+    setNewPacienteRefeicoes(p.refeicoes_por_dia ? String(p.refeicoes_por_dia) : '');
+    setNewPacienteHorarioAcorda(p.horario_acorda || '');
+    setNewPacienteHorarioDorme(p.horario_dorme || '');
+    setNewPacienteAgua(p.litros_agua ? String(p.litros_agua) : '');
+    setNewPacienteAtividadeFisica(p.atividade_fisica ? 'Sim' : 'Não');
+    setNewPacienteAtividadeFisicaDesc(p.atividade_fisica_descricao || '');
+    setNewPacienteObs(p.observacoes || '');
+    setFormTab('pessoal');
+    setActiveTab('paciente-cadastro');
+  };
+
+  // ==========================================
+  // Form submission: Create / Edit Paciente
   // ==========================================
   const handleRegisterPaciente = async (e) => {
     e.preventDefault();
@@ -327,55 +395,33 @@ export default function Dashboard({ navigateToLogin }) {
         observacoes: newPacienteObs || null
       };
 
-      const result = await createPaciente(pData);
-      
-      // PostgREST return=representation returns an array or single object
-      const createdPaciente = Array.isArray(result) ? result[0] : result;
+      let targetId = selectedPacienteId;
+      if (editingPacienteId) {
+        await updatePaciente(editingPacienteId, pData);
+        targetId = editingPacienteId;
+        setSuccessMessage('Dados do paciente atualizados com sucesso!');
+      } else {
+        const result = await createPaciente(pData);
+        const createdPaciente = Array.isArray(result) ? result[0] : result;
+        if (createdPaciente && createdPaciente.id) {
+          targetId = createdPaciente.id;
+        }
+        setSuccessMessage('Paciente cadastrado com sucesso!');
+      }
 
-      // Clear Form states
-      setNewPacienteNome('');
-      setNewPacienteNascimento('');
-      setNewPacienteSexo('Feminino');
-      setNewPacienteTelefone('');
-      setNewPacienteWhatsapp('');
-      setNewPacienteEmail('');
-      setNewPacientePeso('');
-      setNewPacienteAltura('');
-      setSelectedObjetivos([]);
-      setNewPacienteObjetivoTexto('');
-      setNewPacienteNivelAtividade('Sedentário');
-      setSelectedPatologias([]);
-      setNewPacientePatologiaCustom('');
-      setSelectedRestricoes([]);
-      setNewPacienteRestricaoCustom('');
-      setSelectedAlergias([]);
-      setNewPacienteAlergiaCustom('');
-      setNewPacienteMedicamentos('');
-      setNewPacienteSuplementos('');
-      setNewPacienteRefeicoes('');
-      setNewPacienteHorarioAcorda('');
-      setNewPacienteHorarioDorme('');
-      setNewPacienteAgua('');
-      setNewPacienteAtividadeFisica('Não');
-      setNewPacienteAtividadeFisicaDesc('');
-      setNewPacienteObs('');
-      setFormTab('pessoal');
-
-      // Reload list and switch to profile view of the created patient
+      setEditingPacienteId(null);
       await loadData();
-      
-      setSuccessMessage('Paciente cadastrado com sucesso!');
-      if (createdPaciente && createdPaciente.id) {
-        setSelectedPacienteId(createdPaciente.id);
+
+      if (targetId) {
+        setSelectedPacienteId(targetId);
         setActiveTab('paciente-perfil');
       } else {
         setActiveTab('pacientes');
       }
       
-      // Auto clear success message after 4s
       setTimeout(() => setSuccessMessage(''), 4000);
     } catch (err) {
-      console.error('Erro ao cadastrar paciente:', err);
+      console.error('Erro ao salvar paciente:', err);
       setError(`Erro ao salvar paciente no banco: ${err.message || err}`);
     }
   };
@@ -554,7 +600,7 @@ export default function Dashboard({ navigateToLogin }) {
               <div className="form-card">
                 <div className="section-header">
                   <h2>Pacientes</h2>
-                  <button className="btn btn-secondary btn-sm" onClick={() => setActiveTab('paciente-cadastro')}>
+                  <button className="btn btn-secondary btn-sm" onClick={startNewPaciente}>
                     + Novo Paciente
                   </button>
                 </div>
@@ -607,11 +653,11 @@ export default function Dashboard({ navigateToLogin }) {
             {/* TAB: FORMULÁRIO DE CADASTRO (3 ABAS) */}
             {activeTab === 'paciente-cadastro' && (
               <div className="card form-card">
-                <button className="btn-back" onClick={() => setActiveTab('pacientes')}>
-                  ← Voltar para listagem
+                <button className="btn-back" onClick={() => editingPacienteId ? setActiveTab('paciente-perfil') : setActiveTab('pacientes')}>
+                  ← Voltar {editingPacienteId ? 'para o perfil' : 'para listagem'}
                 </button>
                 <h2 style={{ fontFamily: 'var(--font-title)', color: 'var(--color-bordeaux-dark)', marginBottom: '24px' }}>
-                  Cadastrar Novo Paciente
+                  {editingPacienteId ? 'Editar Dados do Paciente' : 'Cadastrar Novo Paciente'}
                 </h2>
 
                 {/* Form Tabs Control */}
@@ -718,9 +764,14 @@ export default function Dashboard({ navigateToLogin }) {
                       </div>
 
                       <div className="form-actions">
-                        <button type="button" className="btn btn-outline" onClick={() => setActiveTab('pacientes')}>
+                        <button type="button" className="btn btn-outline" onClick={() => editingPacienteId ? setActiveTab('paciente-perfil') : setActiveTab('pacientes')}>
                           Cancelar
                         </button>
+                        {editingPacienteId && (
+                          <button type="submit" className="btn btn-secondary">
+                            Salvar Alterações
+                          </button>
+                        )}
                         <button type="button" className="btn btn-primary" onClick={() => setFormTab('clinico')}>
                           Avançar
                         </button>
@@ -943,6 +994,11 @@ export default function Dashboard({ navigateToLogin }) {
                         <button type="button" className="btn btn-outline" onClick={() => setFormTab('pessoal')}>
                           Voltar
                         </button>
+                        {editingPacienteId && (
+                          <button type="submit" className="btn btn-secondary">
+                            Salvar Alterações
+                          </button>
+                        )}
                         <button type="button" className="btn btn-primary" onClick={() => setFormTab('habitos')}>
                           Avançar
                         </button>
@@ -1055,7 +1111,7 @@ export default function Dashboard({ navigateToLogin }) {
                           Voltar
                         </button>
                         <button type="submit" className="btn btn-primary">
-                          Salvar Paciente
+                          {editingPacienteId ? 'Salvar Alterações' : 'Salvar Paciente'}
                         </button>
                       </div>
                     </div>
@@ -1067,9 +1123,14 @@ export default function Dashboard({ navigateToLogin }) {
             {/* TAB: PERFIL DO PACIENTE */}
             {activeTab === 'paciente-perfil' && selectedPaciente && (
               <div>
-                <button className="btn-back" onClick={() => { setActiveTab('pacientes'); setIsRecordingConsulta(false); }}>
-                  ← Voltar para listagem
-                </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <button className="btn-back" style={{ marginBottom: 0 }} onClick={() => { setActiveTab('pacientes'); setIsRecordingConsulta(false); }}>
+                    ← Voltar para listagem
+                  </button>
+                  <button className="btn btn-secondary btn-sm" style={{ width: 'auto' }} onClick={() => startEditPaciente(selectedPaciente)}>
+                    ✏️ Editar Dados do Paciente
+                  </button>
+                </div>
 
                 <div className="profile-grid">
                   {/* Left Column: Personal info & Clinical & Habits summaries */}
