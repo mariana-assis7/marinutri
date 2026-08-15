@@ -808,3 +808,129 @@ body {
   transform: translateX(-2px);
 }
 
+/* Form Tabs styling */
+.form-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: 30px;
+}
+
+.form-tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: var(--transition-smooth);
+}
+
+.form-tab-btn:hover {
+  color: var(--color-bordeaux);
+}
+
+.form-tab-btn.active {
+  color: var(--color-bordeaux);
+  border-bottom-color: var(--color-bordeaux);
+}
+
+/* Checkbox and Radio Grids */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"],
+.checkbox-item input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-bordeaux);
+  cursor: pointer;
+}
+
+/* Custom Text inputs inside selections */
+.custom-input-inline {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+}
+
+/* Input suffix helpers */
+.input-with-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-unit input {
+  padding-right: 48px;
+}
+
+.input-unit-label {
+  position: absolute;
+  right: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* Readonly fields (like IMC) */
+.readonly-field {
+  background-color: var(--color-bg-base);
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  cursor: not-allowed;
+}
+
+/* Toast Success Message */
+.toast-success {
+  background-color: var(--color-green-pastel);
+  border-left: 4px solid var(--color-green);
+  color: var(--color-green-dark);
+  padding: 14px 20px;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  margin-bottom: 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Profile details accordion/card groups */
+.profile-section-title {
+  font-family: var(--font-title);
+  color: var(--color-bordeaux);
+  border-bottom: 1.5px solid var(--color-border);
+  padding-bottom: 6px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.profile-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+
