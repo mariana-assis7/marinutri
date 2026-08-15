@@ -5,5 +5,8 @@ const neonAuthUrl = import.meta.env.VITE_NEON_AUTH_URL || 'https://ep-icy-pond-a
 
 export const authClient = createAuthClient(neonAuthUrl, {
   adapter: BetterAuthReactAdapter(),
+  fetchOptions: {
+    credentials: 'include',
+  },
 });
 
