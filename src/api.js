@@ -1,6 +1,7 @@
 import { authClient } from './auth';
 
 const DATA_API_URL = import.meta.env.VITE_NEON_DATA_API_URL || 'https://ep-icy-pond-ac0gshlr.apirest.sa-east-1.aws.neon.tech/neondb/rest/v1';
+const PATIENT_TABLE = import.meta.env.VITE_NEON_TABLE_PACIENTES || 'pacientes';
 
 async function getAuthHeaders() {
   try {
@@ -25,7 +26,7 @@ async function getAuthHeaders() {
 
 export async function fetchPacientes() {
   const headers = await getAuthHeaders();
-  const url = `${DATA_API_URL}/pacientes`;
+  const url = `${DATA_API_URL}/${PATIENT_TABLE}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -61,7 +62,7 @@ export async function fetchConsultas() {
 
 export async function createPaciente(paciente) {
   const headers = await getAuthHeaders();
-  const url = `${DATA_API_URL}/pacientes`;
+  const url = `${DATA_API_URL}/${PATIENT_TABLE}`;
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -83,7 +84,7 @@ export async function createPaciente(paciente) {
 
 export async function updatePaciente(id, paciente) {
   const headers = await getAuthHeaders();
-  const url = `${DATA_API_URL}/pacientes?id=eq.${id}`;
+  const url = `${DATA_API_URL}/${PATIENT_TABLE}?id=eq.${id}`;
   try {
     const response = await fetch(url, {
       method: 'PATCH',

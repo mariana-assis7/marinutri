@@ -486,7 +486,7 @@ export default function Dashboard({ navigateToLogin }) {
       {/* Sidebar Fixo */}
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <span className="logo-icon">🌿</span>
+          <img src="/logo.png" alt="Mari Nutri" className="logo-img" />
           <h2>MariNutri</h2>
         </div>
         <nav className="sidebar-nav">

@@ -80,7 +80,7 @@ export default function Register({ setView, navigateToDashboard }) {
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-logo">
-            <span className="logo-icon">🌿</span>
+            <img src="/logo.png" alt="Mari Nutri" className="logo-img" />
             <h1>Mari Nutri</h1>
           </div>
           <p className="auth-subtitle">Gestão inteligente para nutricionistas</p>
